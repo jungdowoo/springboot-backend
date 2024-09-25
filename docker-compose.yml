@@ -2,10 +2,10 @@ services:
   db:
     image: mariadb:latest
     environment:
-      MYSQL_ROOT_PASSWORD: 0000
+      MYSQL_ROOT_PASSWORD: "0000"
       MYSQL_DATABASE: justart
       MYSQL_USER: root
-      MYSQL_PASSWORD: 0000
+      MYSQL_PASSWORD: "0000"
     ports:
       - "3306:3306"
     volumes:
@@ -20,12 +20,13 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mariadb://db:3306/justart
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: 0000
+      SPRING_DATASOURCE_PASSWORD: "0000"
     depends_on:
       - db
-
     networks:
       - app-network
+    
+    command: ./mvnw clean package -DskipTests
 
 volumes:
   db_data:
