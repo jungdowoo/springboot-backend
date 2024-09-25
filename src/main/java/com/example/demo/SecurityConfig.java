@@ -30,46 +30,11 @@ public class SecurityConfig {
 	public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
 		this.jwtTokenProvider = jwtTokenProvider;
 	}
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//            .cors().and().csrf().disable()
-//            .authorizeRequests((requests) -> requests
-//                .antMatchers("/api/users/login","/api/author/login", "/api/user/profile/**","/api/users/register", "/api/author/create","/api/users/check-duplicate", "/api/users/check-name-duplicate", "/api/posts", "/api/posts/**", "/api/upload", "/uploads/**").permitAll()
-//                .antMatchers("/api/user/profile/current").authenticated() 
-//               .anyRequest().authenticated()
-//            )
-//            .formLogin((form) -> form
-//                .loginProcessingUrl("/api/login")
-//                .defaultSuccessUrl("/home", true)
-//                .failureUrl("/login?error=true")
-//                .usernameParameter("userId")
-//                .passwordParameter("userPwd")
-//            )
-//            .logout((logout) -> logout
-//                .logoutUrl("/perform_logout")
-//                .deleteCookies("JSESSIONID")
-//                .logoutSuccessUrl("/login")
-//            );
-//
-//        return http.build();
-//    }
-//
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
-//    @Bean
-//    public HttpFirewall allowUrlEncodedSlashHttpFirewall() {
-//    	StrictHttpFirewall firewall = new StrictHttpFirewall();
-//    	firewall.setAllowUrlEncodedSlash(true);
-//    	firewall.setAllowSemicolon(true);
-//    	return firewall;
-//    }
+
 	 @Bean
 	    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 	        http
-	            .cors().configurationSource(corsConfigurationSource())  // CORS 설정 추가
+	            .cors().configurationSource(corsConfigurationSource())
 	            .and().csrf().disable()
 	            .authorizeRequests((requests) -> requests
 	                .antMatchers("/api/users/login", "/api/author/login", "/api/user/profile/**", "/api/users/register", "/api/author/create", "/api/users/check-duplicate", "/api/users/check-name-duplicate", "/api/posts", "/api/posts/**", "/api/upload", "/api/users/profile/current","/api/artworks/**","/uploads/**").permitAll()
@@ -78,7 +43,6 @@ public class SecurityConfig {
 	            )
 	                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
 	           
-	            // `formLogin`과 관련된 설정을 추가했으나, API 기반 인증에서는 필요하지 않을 수 있습니다.
 	            .formLogin((form) -> form
 	                .loginProcessingUrl("/api/login")
 	                .defaultSuccessUrl("/home", true)
@@ -95,14 +59,13 @@ public class SecurityConfig {
 	        return http.build();
 	    }
 
-	    // CORS 설정을 Spring Security에 직접 추가
 	    @Bean
 	    public CorsConfigurationSource corsConfigurationSource() {
 	        CorsConfiguration configuration = new CorsConfiguration();
-	        configuration.setAllowedOrigins(List.of("http://localhost:3000")); // 프론트엔드 도메인 설정
-	        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용된 HTTP 메서드
-	        configuration.setAllowedHeaders(List.of("*")); // 모든 헤더 허용
-	        configuration.setAllowCredentials(true); // 자격 증명 허용
+	        configuration.setAllowedOrigins(List.of("http://localhost:3000")); 
+	        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+	        configuration.setAllowedHeaders(List.of("*")); 
+	        configuration.setAllowCredentials(true); 
 
 	        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 	        source.registerCorsConfiguration("/**", configuration);

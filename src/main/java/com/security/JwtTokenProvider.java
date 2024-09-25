@@ -19,9 +19,9 @@ import java.util.Date;
 public class JwtTokenProvider {
 
 	@Value("${jwt.secret}")
-    private  String secretKey = "YfrMNmAK2IXw1ZN2rMFaEKNGOLrSMyErj+bBBeEqtvs=";  // 이 키는 반드시 외부로 노출되지 않도록 해야 합니다.
+    private  String secretKey = "YfrMNmAK2IXw1ZN2rMFaEKNGOLrSMyErj+bBBeEqtvs=";  
 	
-    private final long validityInMilliseconds = 3600000; // 1시간
+    private final long validityInMilliseconds = 3600000; 
 
     @PostConstruct
     public void init() {
@@ -81,12 +81,12 @@ public class JwtTokenProvider {
         }
     }
 
-    // 실제로는 UserDetailsService를 통해 사용자 정보를 로드해야 합니다.
+    
     public UserDetails loadUserByUsername(String username) {
-        // 예시용 코드. 실제로는 DB 또는 다른 데이터 소스에서 사용자 정보를 가져와야 합니다.
+       
         return org.springframework.security.core.userdetails.User
                 .withUsername(username)
-                .password("") // JWT는 이미 인증된 사용자를 위한 것이므로 비밀번호는 필요 없음
+                .password("") 
                 .roles("USER")
                 .build();
     }

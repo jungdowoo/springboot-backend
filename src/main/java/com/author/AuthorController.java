@@ -25,12 +25,10 @@ public class AuthorController {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    // 닉네임 중복 체크
     @PostMapping("/check-name-duplicate")
     public Map<String, Object> checkNameDuplicate(@RequestBody Map<String, String> payload) {
         String authorName = payload.get("userName");
 
-        // 닉네임 유효성 검사 로직
         String namePattern = "^[a-zA-Z0-9가-힣]{2,10}$";
         Map<String, Object> response = new HashMap<>();
 
@@ -46,12 +44,11 @@ public class AuthorController {
         return response;
     }
 
-    // 아이디 중복 체크 
+    
     @PostMapping("/check-id-duplicate")
     public Map<String, Object> checkIdDuplicate(@RequestBody Map<String, String> payload) {
         String authorId = payload.get("userId");
 
-        // ID 유효성 검사 로직
         String idPattern = "^(?=.*[0-9]).{4,12}$";
         Map<String, Object> response = new HashMap<>();
 
@@ -66,8 +63,6 @@ public class AuthorController {
         response.put("isDuplicate", isDuplicate);
         return response;
     }
-
-    // 작가 회원가입
     @PostMapping("/create")
     public ResponseEntity<?> createAuthor(@RequestBody Map<String, String> payload) {
         String authorId = payload.get("authorId");
@@ -86,7 +81,6 @@ public class AuthorController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
- // 작가 로그인 추가
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> payload) {
         String authorId = payload.get("authorId");

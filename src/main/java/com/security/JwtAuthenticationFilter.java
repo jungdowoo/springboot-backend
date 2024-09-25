@@ -24,13 +24,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String token = jwtTokenProvider.resolveToken(request);
-        System.out.println("Received JWT Token:" + token); // 토큰이 올바르게 수신확인
+        System.out.println("Received JWT Token:" + token); 
 
         if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
-        	System.out.println("Valid JWT Token found"); // 토큰이 유효한지 확인
+        	System.out.println("Valid JWT Token found"); 
             SecurityContextHolder.getContext().setAuthentication(jwtTokenProvider.getAuthentication(token));
         } else {
-        	System.out.println("InValid or no JWT Token found"); // 토큰이 없거나 유효하지않으면 이 메시지 출력
+        	System.out.println("InValid or no JWT Token found");
         }
 
         chain.doFilter(request, response);

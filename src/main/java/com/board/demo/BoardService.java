@@ -25,11 +25,9 @@ public class BoardService {
 	public BoardVO createPost(BoardVO post) {
 		return boardRepository.save(post);
 	}
-	// 게시글 수정기능
 	public BoardVO updatePost(BoardVO post) {
 		return boardRepository.save(post);
 	}
-	// 게시글 삭제 기능
 	public void deletePost(BoardVO post) {
 		boardRepository.delete(post);
 	}

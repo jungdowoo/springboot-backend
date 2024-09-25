@@ -44,9 +44,6 @@ public class ArtworkService {
 
         List<String> imagePaths = new ArrayList<>();
         
-        
-        
-        //  다중 이미지 업로드 처리
         if (images != null && !images.isEmpty()) {
             for (MultipartFile image : images) {
                 if (!image.isEmpty()) {
@@ -70,8 +67,6 @@ public class ArtworkService {
                 }
         }
     }
-       
-        //artworkVO에 이미지 경로 리스트 설정
         if (!imagePaths.isEmpty()) {
             String imagePathsString = String.join(",", imagePaths); 
             artwork.setImagePaths(imagePathsString);
@@ -82,7 +77,6 @@ public class ArtworkService {
             System.out.println("No images uploaded");
         }
 
-        // Artwork 저장
         return artworkRepository.save(artwork);
     }
     
@@ -95,32 +89,19 @@ public class ArtworkService {
             artworks = artworkRepository.findByCategory(category);
         }
     
-    // 작품 리스트에 각 작품의 authorName설정
         for (ArtworkVO artwork : artworks) {
             AuthorVO author = authorRepository.findById(artwork.getAuthorId()).orElse(null);
             if (author != null) {
-                artwork.setAuthorName(author.getAuthorName());  // 작가 이름 설정
+                artwork.setAuthorName(author.getAuthorName());
             }
         }
 
-        return artworks;  // List 반환
+        return artworks;
     }
-    
-    // 작품 상세페이지
-   /* public ArtworkVO getArtworkById(String id) {
-    	ArtworkVO artwork = artworkRepository.findById(id).orElse(null);
-    	if (artwork != null) {
-    		AuthorVO author = authorRepository.findById(artwork.getAuthorId()).orElse(null);
-    		if(author != null) {
-    			artwork.setAuthorName(author.getAuthorName());
-    		}
-    	}
-    	return artwork;
-    }*/
+   
     public ArtworkVO getArtworkById(String id) {
         ArtworkVO artwork = artworkRepository.findById(id).orElse(null);
         
-        // Check if artwork is found
         if (artwork != null) {
             System.out.println("Artwork found: " + artwork.getTitle());
             
@@ -143,9 +124,7 @@ public class ArtworkService {
         
         return artwork;
     }
-    // 검색 기능 추가
     public List<ArtworkVO> searchArtworks(String query) {
-        // 제목 또는 내용에서 검색어가 포함된 작품을 필터링
         List<ArtworkVO> artworks = artworkRepository.findAll();
         List<ArtworkVO> filteredArtworks = new ArrayList<>();
         

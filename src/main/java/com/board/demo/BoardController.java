@@ -84,12 +84,11 @@ public class BoardController {
             BoardVO savedPost = boardService.createPost(post);
             return ResponseEntity.ok(savedPost);
         } catch (Exception e) {
-            e.printStackTrace(); // 예외를 콘솔에 출력
+            e.printStackTrace(); 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .body("{\"error\":\"Error creating post: " + e.getMessage() + "\"}");
         }
     }
-    // 게시물 수정기능
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePost(
             @PathVariable String id,
@@ -99,7 +98,7 @@ public class BoardController {
             Optional<BoardVO> postOptional = boardService.getPostById(id);
             if (postOptional.isPresent()) {
                 BoardVO post = postOptional.get();
-                String userId = getUserIdFromToken(token);  // 토큰에서 사용자 ID 추출
+                String userId = getUserIdFromToken(token); 
 
                 if (post.getUserId().equals(userId)) {
                     post.setTitle(updatedPost.getTitle());
@@ -124,7 +123,6 @@ public class BoardController {
                                  .body("Error updating post: " + e.getMessage());
         }
     }
-    // 게시물 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePost(
             @PathVariable String id,
@@ -133,7 +131,7 @@ public class BoardController {
             Optional<BoardVO> postOptional = boardService.getPostById(id);
             if (postOptional.isPresent()) {
                 BoardVO post = postOptional.get();
-                String userId = getUserIdFromToken(token);  // 토큰에서 사용자 ID 추출
+                String userId = getUserIdFromToken(token); 
 
                 if (post.getUserId().equals(userId)) {
                     boardService.deletePost(post);
@@ -152,7 +150,6 @@ public class BoardController {
         }
     }
 
-    // 토큰에서 사용자 ID를 추출하는 메서드 (임의로 작성, 실제 구현에 맞게 수정 필요)
     private String getUserIdFromToken(String token) {
       
     	String  secretKey="YfrMNmAK2IXw1ZN2rMFaEKNGOLrSMyErj+bBBeEqtvs=";
@@ -163,7 +160,6 @@ public class BoardController {
     	return claims.getSubject();
     }
     
-    // 특정 게시물의 댓글 가져오기
     @GetMapping("/{id}/comments")
     public ResponseEntity<List<Comment>> getCommentsByPostId(@PathVariable String id) {
         Optional<BoardVO> postOptional = boardService.getPostById(id);
@@ -174,7 +170,6 @@ public class BoardController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
-    // 댓글생성
     @PostMapping("/{id}/comments")
     public ResponseEntity<?> createComment(
             @PathVariable String id,
@@ -206,7 +201,6 @@ public class BoardController {
         }
     }
 
- // 댓글 수정 기능 추가
     @PutMapping("/{postId}/comments/{commentId}")
     public ResponseEntity<?> updateComment(
             @PathVariable String postId,
@@ -234,7 +228,6 @@ public class BoardController {
         }
     }
 
-    // 댓글 삭제 기능 추가
     @DeleteMapping("/{postId}/comments/{commentId}")
     public ResponseEntity<?> deleteComment(
             @PathVariable String postId,
@@ -264,7 +257,7 @@ public class BoardController {
     
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception e) {
-        e.printStackTrace(); // 예외를 콘솔에 출력
+        e.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                              .body("{\"error\":\"Error: " + e.getMessage() + "\"}");
     }

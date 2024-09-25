@@ -29,8 +29,6 @@ public class ArtworkVO {
 	}
 
 	private String title;
-	//@Column(columnDefinition = "TEXT")  
-    //private String description;
 	
 	 @Column(columnDefinition = "LONGTEXT")
 	   private String content; 
@@ -91,14 +89,6 @@ public class ArtworkVO {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-
-	/*public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}*/
 
 	public String getCategory() {
 		return category;

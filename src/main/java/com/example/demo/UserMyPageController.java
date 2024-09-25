@@ -52,17 +52,14 @@ public class UserMyPageController {
         try {
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
             String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-            Path imagePath = Paths.get(uploadDir, fileName); // 업로드 경로 설정
+            Path imagePath = Paths.get(uploadDir, fileName);
 
-            // 파일 업로드 디렉토리가 존재하지 않으면 생성
             if (Files.notExists(imagePath.getParent())) {
                 Files.createDirectories(imagePath.getParent());
             }
 
-            // 파일 저장
             Files.copy(image.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
             
-            // URL 반환
             String imageUrl = "/uploads/" + fileName;
             userService.updateUserProfileImage(username, imageUrl);
 
@@ -91,8 +88,7 @@ public class UserMyPageController {
     }
 
     private String getUserProfileImage(String userId) {
-        // 사용자 프로필 이미지 파일명 반환 로직
-        // 여기서는 단순히 예시를 보여드립니다.
+       
         return "currentImage.jpg";
     }
     

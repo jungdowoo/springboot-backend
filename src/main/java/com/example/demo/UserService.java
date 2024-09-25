@@ -51,7 +51,6 @@ public class UserService {
     
     private static final Logger logger = LoggerFactory.getLogger(UserService.class); 
     
- // JWT 토큰 생성 메서드
     public String generateToken(UserVO user) {
         return Jwts.builder()
                 .setSubject(user.getUserId())
@@ -61,12 +60,10 @@ public class UserService {
                 .compact();
     }
 
-    // 모든 사용자 조회
     public List<UserVO> getAllUsers(){
         return userRepository.findAll();
     }
     
-    // 사용자 등록
     public void registerUser(String userId, String rawPassword, String userName, String phoneNum, String roles) {
         String encodedPassword = passwordEncoder.encode(rawPassword); 
         UserVO user = new UserVO();
@@ -78,38 +75,31 @@ public class UserService {
         userRepository.save(user);
     }
     
-    
-    // 비밀번호 검증
     public boolean checkPassword(String rawPassword, String encodedPassword) {
         return passwordEncoder.matches(rawPassword, encodedPassword); 
     }
     
-    // 사용자 존재 여부 확인
     public boolean userExists(String userId) {
         return userRepository.existsByUserId(userId);
     }
-    
-    // 닉네임 존재 여부 확인
+   
     public boolean userExistsByName(String userName) {
         return userRepository.existsByUserName(userName);
     }
     
-    // 사용자 ID로 사용자 정보 조회
     public UserVO getUserById(String id) {
         return userRepository.findById(id).orElse(null);
     }
     
-    // 사용자 정보 업데이트
     public UserVO updateUser(UserVO user) {
         return userRepository.save(user);
     }
     
-    // 로그인 로직 
     public UserVO login(String userId, String rawPassword) {
         UserVO user = userRepository.findByUserId(userId);
         if (user == null) {
             logger.info("로그인 실패 - 사용자 ID: {} 존재하지 않음", userId);
-            return null; // 사용자 존재하지 않음
+            return null; 
         }
 
         logger.info("로그인 시도 - 사용자 ID: {}", userId);
@@ -119,20 +109,17 @@ public class UserService {
             return user;
         } else {
             logger.info("로그인 실패 - 비밀번호 불일치, 사용자 ID: {}", userId);
-            return null; // 비밀번호 불일치
+            return null; 
         }
     }
     
-    // 사용자 삭제
     public void deleteUser(String id) {
         userRepository.deleteById(id);
     }
     
-    // 사용자 ID로 사용자 정보 조회
     public UserVO findByUserId(String userId) {
         return userRepository.findByUserId(userId); 
     }
-    // 사용자 프로필 조회
     public UserVO getUserProfile(String userId) {
     	return userRepository.findByUserId(userId);
     }
@@ -152,7 +139,6 @@ public class UserService {
         return user;
     }
     
-    // 사용자 프로필 업데이트
     public UserVO updateUserProfile(String username, UserVO updatedUser) {
     	UserVO user = userRepository.findByUserId(username);
     	if(user != null) {
@@ -163,35 +149,20 @@ public class UserService {
     		return null;
     	}
     }
- // 프로필 이미지 업로드
     public String uploadProfileImage(MultipartFile image) throws IOException {
-    	logger.info("uploadProfileImage 메서드가 호출되었습니다.");
-    	
-        // 파일 이름 생성
+       
         String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-        logger.info("Attempting to save file with name:" + fileName);
-
-        // 파일 저장 경로
-        java.nio.file.Path filePath = Paths.get(uploadDir, fileName);
-        logger.info("Saveing file to path:" + filePath);
         
+        java.nio.file.Path filePath = Paths.get(uploadDir, fileName);
         try {
-            // 파일 저장
             Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            logger.info("File successfully saved:" + filePath);
-
-            // 사용자 이름 가져오기
             String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-            logger.info("Authenticated userId:" + userId);
-            
-            logger.info("Attempting to find user with userId:" + userId);
             
             UserVO user = userRepository.findByUserId(userId);
             if (user != null) {
                 String absoluteImageUrl = "/uploads/" + fileName;
                 user.setProfileImage(absoluteImageUrl);
                 userRepository.save(user);
-                logger.info("User profile image updated successfully:"+ absoluteImageUrl);
                 return absoluteImageUrl;
             } else {
                logger.error("User not found for userId:" + userId);
@@ -221,9 +192,7 @@ public class UserService {
         }
         return null;
     }
-    // 프로필 이미지 업데이트 메서드 추가
     public void updateUserProfileImage(String userId, String imageUrl) {
-    	logger.info("Attempting to find user with userId:" + userId);
     	
     	UserVO user = userRepository.findByUserId(userId);
     	if(user != null) {
@@ -234,23 +203,20 @@ public class UserService {
     	}
     }
     
-    // 닉네임변경
     public UserVO updateUserName(String userId, String newUserName) {
         UserVO user = userRepository.findByUserId(userId);
         if (user != null) {
             user.setUserName(newUserName);
-            return userRepository.save(user); // 변경된 닉네임을 저장
+            return userRepository.save(user); 
         }
-        return null; // 사용자를 찾을 수 없는 경우 null 반환
+        return null; 
     }
     
-    // 아이디 변경
     public UserVO updateUserId(String currentUserId, String newUserId) {
-    	// 이미 사용중인 아디확인
+    	
     	if (userRepository.existsById(newUserId)) {
     		throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
     	}
-    	// 사용자 조회
     	UserVO user = userRepository.findByUserId(currentUserId);
     	if(user != null) {
     		user.setUserId(newUserId);
@@ -258,7 +224,7 @@ public class UserService {
     	}
     	return null;
     }
-    // 비밀번호 변경
+    
     public UserVO updatePassword(String userId, String newPassword) {
     	UserVO user = userRepository.findByUserId(userId);
     	if(user != null) {
@@ -268,7 +234,6 @@ public class UserService {
     	}
     	return null;
     }
-    // 휴대폰 번호 변경
     public UserVO updatePhoneNum(String userId, String newPhoneNum) {
     	UserVO user = userRepository.findByUserId(userId);
     	if (user != null) {

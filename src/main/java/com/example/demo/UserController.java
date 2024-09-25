@@ -27,7 +27,6 @@ public class UserController {
     @Autowired
     private FileUploadService fileUploadService;
 
-    // 사용자 등록
     @PostMapping("/register")
     public ResponseEntity<?> createUser(@RequestBody Map<String, String> payload) {
     	System.out.println("Received payload: " + payload);
@@ -37,15 +36,11 @@ public class UserController {
         String phoneNum = payload.get("phoneNum");
         String roles = payload.getOrDefault("roles", "USER");
 
-        
-        
-     // 사용자 등록
         userService.registerUser(userId, rawPassword, userName, phoneNum, roles);
         
         return ResponseEntity.ok().build();
     }
 
-    // 로그인
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> payload) {
         String userId = payload.get("userId");
@@ -72,7 +67,6 @@ public class UserController {
         }
     }
 
-    // 사용자 정보 조회
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable("id") String id) {
         UserVO user = userService.getUserById(id);
@@ -83,12 +77,11 @@ public class UserController {
         }
     }
 
-    // 사용자 정보 수정
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable("id") String id, @RequestBody Map<String, String> payload) {
         UserVO user = userService.getUserById(id);
         if (user != null) {
-            // 사용자 정보 업데이트
+            
             if (payload.containsKey("userName")) {
                 user.setUserName(payload.get("userName"));
             }
@@ -102,7 +95,6 @@ public class UserController {
         }
     }
 
-    // 사용자 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable("id") String id) {
         if (userService.userExists(id)) {
@@ -112,7 +104,7 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
- // 아이디 중복 체크
+ 
     @PostMapping("/check-duplicate")
     public ResponseEntity<Map<String, Object>> checkDuplicate(@RequestBody Map<String, String> payload) {
         String userId = payload.get("userId");
@@ -122,7 +114,6 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    // 닉네임 중복 체크
     @PostMapping("/check-name-duplicate")
     public ResponseEntity<Map<String, Object>> checkNameDuplicate(@RequestBody Map<String, String> payload) {
         String userName = payload.get("userName");
@@ -132,8 +123,6 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
     
-    
-    // 사용자 프로필
     @GetMapping("/profile/current")
     public ResponseEntity<?> getCurrentUserProfile() {
         UserVO user = userService.getCurrentUserProfile();
@@ -144,14 +133,12 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User profile not found");
         }
 }
-    // 프로필 이미지
     @PostMapping("/profile/upload")
     public ResponseEntity<?> uploadProfileImage(@RequestParam("image") MultipartFile image) {
         if (image.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("없는 이미지 요청");
         }
         try {
-            // 사용자 이름 가져오기 (인증된 사용자)
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
             System.out.println("Authenticated username:" + username);
             
@@ -161,15 +148,9 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자를 찾을 수 없습니다.");
             }
 
-            // 파일 업로드 서비스 호출하여 이미지 저장
             String imageUrl = fileUploadService.handleFileUpload(image);
-            System.out.println("Image uploaded successfully:" + imageUrl);
-
-            // 저장된 이미지 URL을 사용자 프로필에 업데이트
             userService.updateUserProfileImage(username, imageUrl);
-            System.out.println("User profile updated with new image URL");
-
-            System.out.println("업로드된 이미지 URL: " + imageUrl);
+            
             return ResponseEntity.ok().body(Map.of("imageUrl", imageUrl));
         } catch (IOException e) {
             e.printStackTrace();
@@ -178,17 +159,14 @@ public class UserController {
     }
     
     
-    // 닉네임 변경
     @PutMapping("/profile/{userId}/nickname")
     public ResponseEntity<?> updateNickname(@PathVariable("userId") String userId, @RequestBody Map<String, String> payload) {
         String newUserName = payload.get("userName");
-
-        // 닉네임이 이미 사용 중인지 확인
+        
         if (userService.userExistsByName(newUserName)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 닉네임입니다.");
         }
 
-        // 닉네임 변경
         UserVO updatedUser = userService.updateUserName(userId, newUserName);
         if (updatedUser != null) {
             return ResponseEntity.ok(updatedUser);
@@ -196,13 +174,11 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자를 찾을 수 없습니다.");
         }
     }
- // 아이디 변경
     @PutMapping("/profile/{userId}/id")
     public ResponseEntity<?> updateUserId(@PathVariable("userId") String currentUserId, @RequestBody Map<String, String> payload) {
         String newUserId = payload.get("userId");
 
         try {
-            // 아이디 변경
             UserVO updatedUser = userService.updateUserId(currentUserId, newUserId);
             if (updatedUser != null) {
                 return ResponseEntity.ok(updatedUser);
@@ -213,7 +189,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
-    // 비밀번호 변경
     @PutMapping("/profile/{userId}/password")
     public ResponseEntity<?> updatePassword(@PathVariable("userId") String userId, @RequestBody Map<String, String> payload) {
     	String newPassword = payload.get("password");
@@ -228,7 +203,6 @@ public class UserController {
     		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("비밀번호 변경 중 오류 발생");
     	}
     }
-    // 휴대폰 번호 변경
     @PutMapping("/profile/{userId}/phone")
     public ResponseEntity<?> updatePhoneNum(@PathVariable("userId") String userId, @RequestBody Map<String, String> payload){
     	String newPhoneNum = payload.get("phoneNum");

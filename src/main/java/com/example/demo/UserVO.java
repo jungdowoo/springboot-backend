@@ -49,7 +49,7 @@ public class UserVO {
     		userName = "defaultUserName";
     	}
     }
-    // Getters and Setters
+    
     public String getId() {
         return id;
     }
