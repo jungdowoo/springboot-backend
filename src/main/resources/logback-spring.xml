@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Define the console appender -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Set the root logger level and appender -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <!-- Specific logger configuration -->
+    <logger name="sun.rmi.transport.tcp" level="INFO"/>
+    <logger name="javax.management.remote.rmi" level="INFO"/>
+    <logger name="org.apache.catalina.session.ManagerBase" level="INFO"/>
+</configuration>
