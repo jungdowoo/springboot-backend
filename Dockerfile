@@ -4,8 +4,11 @@ FROM openjdk:17-jdk-alpine
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the Maven wrapper
+# Copy the Maven wrapper and project files into the container
 COPY . .
+
+# Give execution permissions to Maven wrapper
+RUN chmod +x ./mvnw
 
 # Build the project using Maven
 RUN ./mvnw clean package
