@@ -21,3 +21,5 @@ EXPOSE 8080
 
 # Command to run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
+# Check contents of target directory
+RUN ls -al target/
