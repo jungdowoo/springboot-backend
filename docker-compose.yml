@@ -5,15 +5,18 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: "0000"
       MYSQL_DATABASE: justart
-      MYSQL_USER: root
-      MYSQL_PASSWORD: "0000"
     ports:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
     networks:
-      - justart_app-network  # 네트워크 이름 설정
-    
+      - justart_app-network
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost"]
+      interval: 10s
+      retries: 5
+      timeout: 10s
+
   app:
     build: .
     ports:
@@ -23,16 +26,16 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: "0000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
-      - justart_app-network  # 네트워크 이름 설정
-    
+      - justart_app-network
+    restart: always
     command: ./mvnw clean package -DskipTests && java -jar target/*.jar
 
 volumes:
   db_data:
 
-# 네트워크 정의 추가
 networks:
   justart_app-network:
     driver: bridge
