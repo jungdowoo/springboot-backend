@@ -1,10 +1,10 @@
 # 1. 빌드 스테이지: Maven을 사용하여 애플리케이션 빌드
-FROM maven:3.8.8-openjdk-17 AS build
+FROM maven:3.8.8-openjdk-17-slim AS build
 
 # 작업 디렉토리 설정
 WORKDIR /app
 
-# 프로젝트 파일 복사
+# 프로젝트 파일 복사 (pom.xml과 소스 코드)
 COPY pom.xml .
 COPY src ./src
 
