@@ -3,7 +3,7 @@ services:
     container_name: db
     image: mariadb:latest
     environment:
-      MYSQL_ROOT_PASSWORD: "0000"
+      MYSQL_ROOT_PASSWORD: 0000
       MYSQL_DATABASE: justart
     ports:
       - "3306:3306"
@@ -12,7 +12,7 @@ services:
     networks:
       - justart_app-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD-SHELL", "mysqladmin ping -uroot -p$MYSQL_ROOT_PASSWORD"]
       interval: 10s
       retries: 5
       timeout: 10s
@@ -24,7 +24,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mariadb://db:3306/justart
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: "0000"
+      SPRING_DATASOURCE_PASSWORD: 0000
     depends_on:
       db:
         condition: service_healthy
