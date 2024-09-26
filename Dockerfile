@@ -1,5 +1,5 @@
 # 1. 빌드 스테이지: Maven을 사용하여 애플리케이션 빌드
-FROM maven:3.8.6-openjdk-17 AS build
+FROM maven:3.8.8-openjdk-17 AS build
 
 # 작업 디렉토리 설정
 WORKDIR /app
