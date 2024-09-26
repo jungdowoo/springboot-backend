@@ -12,7 +12,7 @@ services:
     networks:
       - justart_app-network
     healthcheck:
-      test: ["CMD", "mysql", "-uroot", "-p$MYSQL_ROOT_PASSWORD", "-e", "SELECT 1"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       retries: 5
       timeout: 10s
