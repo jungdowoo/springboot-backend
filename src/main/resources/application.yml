@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: justart
+  datasource:
+    hikari:
+      username: yyh
+      password: Gks!052462
+    url: jdbc:mariadb://203.245.30.195:13306/justart
+  jpa:
+    hibernate:
+      ddl-auto: update
+      use-new-id-generator-mappings: true
+      database-platform: "org.hibernate.dialect.MariaDBDialect"
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      location: /uploads
+      enabled: true
+      max-request-size: 50MB
+
+server:
+  tomcat:
+    max-http-form-post-size: 50MB
+    max-swallow-size: 50MB
+file:
+  upload-dir: /uploads
+
+logging:
+  level:
+    root: TRACE
+jwt:
+  secret: YfrMNmAK2IXw1ZN2rMFaEKNGOLrSMyErj+bBBeEqtvs=
+  expiration: 3600000
