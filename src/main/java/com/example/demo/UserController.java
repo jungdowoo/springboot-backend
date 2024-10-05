@@ -19,7 +19,6 @@ import java.util.HashSet;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     @Autowired
@@ -37,7 +36,7 @@ public class UserController {
         String roles = payload.getOrDefault("roles", "USER");
 
         userService.registerUser(userId, rawPassword, userName, phoneNum, roles);
-        
+
         return ResponseEntity.ok().build();
     }
 
@@ -81,7 +80,7 @@ public class UserController {
     public ResponseEntity<?> updateUser(@PathVariable("id") String id, @RequestBody Map<String, String> payload) {
         UserVO user = userService.getUserById(id);
         if (user != null) {
-            
+
             if (payload.containsKey("userName")) {
                 user.setUserName(payload.get("userName"));
             }
@@ -104,7 +103,7 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
- 
+
     @PostMapping("/check-duplicate")
     public ResponseEntity<Map<String, Object>> checkDuplicate(@RequestBody Map<String, String> payload) {
         String userId = payload.get("userId");
@@ -122,7 +121,7 @@ public class UserController {
         response.put("isDuplicate", isDuplicate);
         return ResponseEntity.ok(response);
     }
-    
+
     @GetMapping("/profile/current")
     public ResponseEntity<?> getCurrentUserProfile() {
         UserVO user = userService.getCurrentUserProfile();
@@ -141,7 +140,7 @@ public class UserController {
         try {
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
             System.out.println("Authenticated username:" + username);
-            
+
             UserVO user = userService.getUserProfile(username);
             if (user == null) {
             	System.out.println("User not found for username:" + username);
@@ -150,19 +149,19 @@ public class UserController {
 
             String imageUrl = fileUploadService.handleFileUpload(image);
             userService.updateUserProfileImage(username, imageUrl);
-            
+
             return ResponseEntity.ok().body(Map.of("imageUrl", imageUrl));
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image");
         }
     }
-    
-    
+
+
     @PutMapping("/profile/{userId}/nickname")
     public ResponseEntity<?> updateNickname(@PathVariable("userId") String userId, @RequestBody Map<String, String> payload) {
         String newUserName = payload.get("userName");
-        
+
         if (userService.userExistsByName(newUserName)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 닉네임입니다.");
         }
@@ -217,11 +216,11 @@ public class UserController {
     		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("휴대폰 번호 변경 중 오류 발생");
     	}
     }
-    
-    
-    
-    
-    
+
+
+
+
+
 }
 
 
