@@ -10,6 +10,7 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,11 +26,18 @@ public class ArtworkController {
 
     @Autowired
     private ArtworkService artworkService;
-    
+
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
-      
-    @GetMapping("/{id}") 
+
+    @Value(value = "#{systemProperties['upload.path']}")
+    private String uploadPath;
+
+
+    @Value(value = "#{systemProperties['upload.url']}")
+    private String uploadUrl;
+
+    @GetMapping("/{id}")
     public ResponseEntity<ArtworkVO> getArtworkById(@PathVariable String id) {
         ArtworkVO artwork = artworkService.getArtworkById(id);
         if (artwork != null) {
@@ -49,33 +57,32 @@ public class ArtworkController {
             @RequestParam("completionDate") String completionDate,
             @RequestParam(value="images", required = false) MultipartFile[] images,
             HttpServletRequest request) {
-        
+
         String token = jwtTokenProvider.resolveToken(request);
         if (token == null || !jwtTokenProvider.validateToken(token)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); 
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String authorId = jwtTokenProvider.getUsername(token);  
+        String authorId = jwtTokenProvider.getUsername(token);
 
         try{
         	List<MultipartFile> imageList = (images != null) ? Arrays.asList(images) : Collections.emptyList();
-        	 
+
         	 ArtworkVO newArtwork = artworkService.saveArtwork(
         			 title, content, category, subCategory, price, deadline, completionDate, imageList, authorId);
              return ResponseEntity.ok(newArtwork);
         } catch (Exception e) {
         	e.printStackTrace();
         	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while uploading the artwork");
-        	 	
+
         }
-       
+
     }
     @PostMapping("/uploadImage")
     public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
         try {
-            String uploadDir = "C:/temp/uploads/";
             String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-            File uploadPath = new File(uploadDir);
-            
+            File uploadPath = new File(this.uploadPath);
+
             if (!uploadPath.exists()) {
                 boolean isCreated = uploadPath.mkdirs();
                 if (isCreated) {
@@ -84,9 +91,9 @@ public class ArtworkController {
             } else {
             }
 
-            file.transferTo(new File(uploadDir + fileName));
+            file.transferTo(new File(this.uploadPath + fileName));
 
-            String fileUrl = "http://localhost:8080/uploads/" + fileName;
+            String fileUrl = uploadUrl + fileName;
             return ResponseEntity.ok(Collections.singletonMap("url", fileUrl));
         } catch (IOException e) {
             e.printStackTrace();
@@ -99,7 +106,7 @@ public class ArtworkController {
         List<ArtworkVO> artworks = artworkService.getArtworksByCategory(category);
         return ResponseEntity.ok(artworks);
     }
-    
+
     @GetMapping("/search")
     public ResponseEntity<List<ArtworkVO>> searchArtworks(@RequestParam("query") String query) {
         try {
@@ -112,7 +119,7 @@ public class ArtworkController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
-    } 
+    }
 }
 
 
